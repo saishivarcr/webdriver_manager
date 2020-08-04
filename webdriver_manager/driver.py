@@ -60,7 +60,7 @@ class ChromeDriver(Driver):
 
     def get_latest_release_version(self):
         log(f"Get LATEST driver version for {self.browser_version}")
-        resp = requests.get(f"{self._latest_release_url}_{self.browser_version}")
+        resp = requests.get(f"{self._latest_release_url}_{self.browser_version}", timeout=20)
         validate_response(resp)
         return resp.text.rstrip()
 
@@ -85,7 +85,7 @@ class GeckoDriver(Driver):
     def get_latest_release_version(self):
         # type: () -> str
         resp = requests.get(url=self.latest_release_url,
-                            headers=self.auth_header)
+                            headers=self.auth_header, timeout=20)
         validate_response(resp)
         return resp.json()["tag_name"]
 
@@ -93,7 +93,7 @@ class GeckoDriver(Driver):
         # https://github.com/mozilla/geckodriver/releases/download/v0.11.1/geckodriver-v0.11.1-linux64.tar.gz
         log(f"Getting latest mozilla release info for {self.get_version()}")
         resp = requests.get(url=self.tagged_release_url(self.get_version()),
-                            headers=self.auth_header)
+                            headers=self.auth_header, timeout=20)
         validate_response(resp)
         assets = resp.json()["assets"]
 
@@ -141,7 +141,7 @@ class IEDriver(Driver):
         data.sort()
 
     def get_latest_release_version(self):
-        resp = requests.get(self._url)
+        resp = requests.get(self._url, timeout=20)
         root = ElementTree.fromstring(resp.text)
 
         values = {}
@@ -202,7 +202,7 @@ class OperaDriver(Driver):
 
     def get_latest_release_version(self):
         # type: () -> str
-        resp = requests.get(self.latest_release_url, headers=self.auth_header)
+        resp = requests.get(self.latest_release_url, headers=self.auth_header, timeout=20)
         validate_response(resp)
         return resp.json()["tag_name"]
 
@@ -212,7 +212,7 @@ class OperaDriver(Driver):
         version = self.get_version()
         log(f"Getting latest opera release info for {version}")
         resp = requests.get(url=self.tagged_release_url(version),
-                            headers=self.auth_header)
+                            headers=self.auth_header, timeout=20)
         validate_response(resp)
         assets = resp.json()["assets"]
         name = "{0}_{1}".format(self.get_name(), self.get_os_type())
@@ -241,6 +241,6 @@ class EdgeChromiumDriver(Driver):
         else:
             major_edge_version = chrome_version(ChromeType.MSEDGE).split(".")[0]
             latest_release_url = self._latest_release_url + '_' + major_edge_version
-        resp = requests.get(latest_release_url)
+        resp = requests.get(latest_release_url, timeout=20)
         validate_response(resp)
         return resp.text.rstrip()

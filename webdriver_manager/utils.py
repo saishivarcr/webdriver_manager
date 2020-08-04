@@ -89,7 +89,7 @@ def write_file(content, path):
 
 def download_file(url: str) -> File:
     log(f"Trying to download new driver from {url}")
-    response = requests.get(url, stream=True)
+    response = requests.get(url, stream=True, timeout=20)
     validate_response(response)
     return File(response)
 
